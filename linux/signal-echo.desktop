@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Signal Echo
+Comment=Hear. Survive. Escape.
+Exec=signal-echo
+Icon=signal-echo
+Terminal=false
+Categories=Game;ActionGame;
+StartupWMClass=Signal Echo

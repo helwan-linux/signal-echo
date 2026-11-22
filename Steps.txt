@@ -1,0 +1,10 @@
+windows
+========
+go mod tidy
+go build -ldflags="-H windowsgui" -o signal-echo.exe .
+
+
+linux
+=====
+go mod tidy
+go build -o signal-echo .
