@@ -323,6 +323,14 @@ func (g *Game) Update() error {
 			g.levelSelectIndex = (g.levelSelectIndex + len(Levels) - 1) % len(Levels)
 			g.play(g.sounds.uiWave)
 		}
+		if inpututil.IsKeyJustPressed(ebiten.KeyPageDown) {
+			g.levelSelectIndex = minInt(g.levelSelectIndex+7, len(Levels)-1)
+			g.play(g.sounds.uiWave)
+		}
+		if inpututil.IsKeyJustPressed(ebiten.KeyPageUp) {
+			g.levelSelectIndex = maxInt(g.levelSelectIndex-7, 0)
+			g.play(g.sounds.uiWave)
+		}
 		if inpututil.IsKeyJustPressed(ebiten.KeyEnter) || inpututil.IsKeyJustPressed(ebiten.KeySpace) {
 			if g.levelSelectIndex <= g.achievements.MaxUnlockedLevel {
 				g.loadLevel(g.levelSelectIndex)
@@ -775,9 +783,9 @@ func (g *Game) drawMenu(screen *ebiten.Image) {
 func (g *Game) drawLevelSelect(screen *ebiten.Image) {
 	drawPanel(screen, 55, 45, screenW-110, screenH-90, color.RGBA{8, 16, 30, 248})
 	ebitenutil.DebugPrintAt(screen,
-		fmt.Sprintf("SELECT SECTOR   |   UNLOCKED: %d / %d",
-			g.achievements.MaxUnlockedLevel+1, len(Levels)),
-		195, 70)
+		fmt.Sprintf("SELECT SECTOR %d/%d   |   UNLOCKED: %d / %d",
+			g.levelSelectIndex+1, len(Levels), g.achievements.MaxUnlockedLevel+1, len(Levels)),
+		165, 70)
 
 	const visibleRows = 7
 	const rowH = 66
@@ -809,7 +817,14 @@ func (g *Game) drawLevelSelect(screen *ebiten.Image) {
 			ebitenutil.DebugPrintAt(screen, "Complete the previous sector to unlock.", 98, y+37)
 		}
 	}
-	ebitenutil.DebugPrintAt(screen, "ENTER: START SECTOR     ESC: BACK", 205, screenH-72)
+	ebitenutil.DebugPrintAt(screen, "ENTER: START   PGUP/PGDN: JUMP 7   ESC: BACK", 175, screenH-72)
+}
+
+func minInt(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
 }
 
 func maxInt(a, b int) int {
@@ -824,7 +839,7 @@ func (g *Game) drawHelp(screen *ebiten.Image) {
 	ebitenutil.DebugPrintAt(screen, "HELP & FIELD MANUAL", 245, 60)
 
 	lines := []string{
-		"CAMPAIGN: 10 levels on a 15x15 grid.",
+		"CAMPAIGN: 90 levels on a 15x15 grid.",
 		"GOAL: Find the yellow Key, open the amber gate, reach green Exit.",
 		"",
 		"MECHANICS:",
@@ -835,7 +850,7 @@ func (g *Game) drawHelp(screen *ebiten.Image) {
 		"    and flags the level as sprinted. Walking is silent.",
 		"  - Wall Bump: Hitting a wall softly reveals that tile.",
 		"",
-		"ACHIEVEMENTS (0/7): Independent counter from the 10 levels.",
+		"ACHIEVEMENTS (0/7): Independent counter from the 90 levels.",
 		"  - First Escape: Clear any level.",
 		"  - Ghost Runner: Clear a level using 2 pulses or fewer.",
 		"  - Silent Step: Clear a level without sprinting.",
